@@ -6,15 +6,15 @@
 Summary:	Mod_proxy_xml is a DSO module for the apache web server
 Name:		apache-%{mod_name}
 Version:	0.1
-Release:	%mkrel 4
+Release:	%mkrel 5
 Group:		System/Servers
 License:	GPL
 URL:		http://apache.webthing.com/mod_proxy_xml/
 # there is no official tar ball
 # http://apache.webthing.com/svn/apache/filters/xmlns/
-Source0:	http://apache.webthing.com/svn/apache/filters/xmlns/mod_proxy_xml.c.bz2
-Source1:	README.mod_proxy_xml.bz2
-Source2:	%{mod_conf}.bz2
+Source0:	http://apache.webthing.com/svn/apache/filters/xmlns/mod_proxy_xml.c
+Source1:	README.mod_proxy_xml
+Source2:	%{mod_conf}
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 Requires(pre):	apache-conf >= 2.2.0
@@ -40,8 +40,9 @@ essential component of a reverse proxy.
 
 %setup -q -c -T -n %{mod_name}-%{version}
 
-bzcat %{SOURCE0} > mod_proxy_xml.c
-bzcat %{SOURCE1} > README
+cp %{SOURCE0} mod_proxy_xml.c
+cp %{SOURCE1} README
+cp %{SOURCE2} %{mod_conf}
 
 # strip away annoying ^M
 find . -type f|xargs file|grep 'CRLF'|cut -d: -f1|xargs perl -p -i -e 's/\r//'
@@ -57,7 +58,7 @@ install -d %{buildroot}%{_sysconfdir}/httpd/modules.d
 install -d %{buildroot}%{_libdir}/apache-extramodules
 
 install -m0755 .libs/*.so %{buildroot}%{_libdir}/apache-extramodules/
-bzcat %{SOURCE2} > %{buildroot}%{_sysconfdir}/httpd/modules.d/%{mod_conf}
+install -m0644 %{mod_conf} %{buildroot}%{_sysconfdir}/httpd/modules.d/%{mod_conf}
 
 %post
 if [ -f %{_var}/lock/subsys/httpd ]; then
@@ -79,5 +80,3 @@ fi
 %doc README
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/httpd/modules.d/%{mod_conf}
 %attr(0755,root,root) %{_libdir}/apache-extramodules/%{mod_so}
-
-
