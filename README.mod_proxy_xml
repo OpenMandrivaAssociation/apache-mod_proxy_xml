@@ -1,0 +1,87 @@
+mod_proxy_xml
+
+   mod_proxy_xml  is  an  output  filter  to  rewrite  links  in  a proxy
+   situation,  to  ensure that links work for users outside the proxy. It
+   serves  the  same  purpose as Apache's ProxyPassReverse directive does
+   for HTTP headers, and is an essential component of a reverse proxy.
+
+   mod_proxy_xml  may  be  an alternative to mod_proxy_html for XHTML and
+   XML pages. The differences are:
+     * mod_proxy_xml   supports   XML  namespaces,  while  mod_proxy_html
+       assumes only the default namespace (for HTML or XHTML).
+     * mod_proxy_xml is trivially extensible to rewrite URLs in other XML
+       namespaces. It currently supports WML as well as XHTML.
+     * mod_proxy_xml  is implemented as an XML Namespace application, and
+       is therefore smaller and simpler than mod_proxy_html.
+     * mod_proxy_xml  requires  its  input to be well-formed XML. It does
+       not  support  HTML,  nor  will  it  recover well if presented with
+       malformed input.
+     * mod_proxy_xml  only  deals  with  simple links, not with rewriting
+       links within CDATA sections.
+     * mod_proxy_xml  doesn't  deal  with  HTML  meta  elements, nor with
+       multi-level charset detection (it simply applies XML rules).
+
+   The   final   two  differences  mean  that  mod_proxy_xml  is  broadly
+   equivalent to Version 1 of mod_proxy_html.
+
+How to use it
+
+   Deployment  is  broadly similar to mod_proxy_html, and the Tutorial on
+   Reverse  Proxying  is  useful background. The details are simpler than
+   mod_proxy_html,  but rely on mod_xmlns or mod_publisher configuration,
+   and you should use mod_filter to apply it to only to relevant markup.
+
+Configuration Directive
+
+ProxyXMLURLMap  from-pattern    to-pattern
+
+   This  causes  from-pattern  to  be rewritten to to-pattern whenever it
+   appears in links. Matching is starts-with.
+
+Other Configuration
+
+   mod_proxy_xml  handlers  have to be registered as namespace providers.
+   To process links in XHTML and WML, use
+XMLNSUseNamespace http://www.w3.org/1999/xhtml on proxy
+XMLNSUseNamespace http://www.wapforum.org/2001/wml on proxy
+
+   with mod_xmlns, or
+MLUseNamespace http://www.w3.org/1999/xhtml on proxy
+MLUseNamespace http://www.wapforum.org/2001/wml on proxy
+
+   with mod_publisher.
+
+   If you are dealing with a default namespace that isn't declared in the
+   markup, you will also need a default namespace
+   . For example, to parse WML without the namespace attribute:
+XMLNSUseNamespace http://www.wapforum.org/2001/wml on proxy
+XMLNSDefaultNamespace http://www.wapforum.org/2001/wml
+
+   These  can  be  used with SetOutputFilter xmlns. However, it is better
+   controlled  with  mod_filter.  So  for example you can use it together
+   with  mod_proxy_html  to  filter different markup types. The following
+   will  filter  text/html  through  mod_proxy_html,  and (with the above
+   XMLNSUseNamespace  directives)  will  filter  WML  and  XHTML  through
+   mod_proxy_xml:
+FilterDeclare url-fix Content-Type
+FilterProvider url-fix proxy-html $text/html
+FilterProvider url-fix xmlns $text/vnd.wap.wml
+FilterProvider url-fix xmlns $application/xhtml+xml
+FilterChain url-fix
+FilterProtocol url-fix "change=yes byteranges=no"
+
+Support
+
+   Please  don't just email with support questions. If you need more help
+   than  is  provided in the documentation, you may register for support.
+   If  you don't want to register, you may also ask questions in a public
+   forum  such  as  the apache users mailinglist, where your question and
+   any responses will be on record for others to see.
+
+Availability
+
+   mod_proxy_xml.c  source code is available under the GNU General Public
+   License  (GPL).  As  with  other  opensource  modules, we can consider
+   alternative licenses by request.
+
+   Up * Home * Contact * Webﬁing * Apache
