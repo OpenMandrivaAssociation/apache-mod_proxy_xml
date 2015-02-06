@@ -6,7 +6,7 @@
 Summary:	DSO module for the apache web server
 Name:		apache-%{mod_name}
 Version:	0.1
-Release:	15
+Release:	16
 Group:		System/Servers
 License:	GPL
 URL:		http://apache.webthing.com/mod_proxy_xml/
