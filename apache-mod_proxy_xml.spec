@@ -9,7 +9,7 @@ Version:	0.1
 Release:	16
 Group:		System/Servers
 License:	GPL
-URL:		http://apache.webthing.com/mod_proxy_xml/
+URL:		https://apache.webthing.com/mod_proxy_xml/
 # there is no official tar ball
 # http://apache.webthing.com/svn/apache/filters/xmlns/
 Source0:	http://apache.webthing.com/svn/apache/filters/xmlns/mod_proxy_xml.c
